@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <!-- SECTION: Meta & Title -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TV Mesaj Tahtası</title>
+
+    <!-- SECTION: Fonts -->
+    <link
+      rel="preconnect"
+      href="https://fonts.googleapis.com"
+    />
+    <link
+      rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- SECTION: Styles -->
+    <link href="style.css" rel="stylesheet" />
+  </head>
+  <body class="theme-light gradient-mesh">
+    <div class="floating-shape" aria-hidden="true"></div>
+
+    <main class="app-shell">
+      <!-- SECTION: Header -->
+      <header class="app-header">
+        <div class="app-header__titles">
+          <h1 class="app-title">TV Mesaj Tahtası</h1>
+          <p class="app-subtitle">
+            Telefonunuzdan mesaj girin, Android TV ekranında anında görünsün.
+          </p>
+        </div>
+        <div class="app-header__actions">
+          <button
+            type="button"
+            class="btn btn-ghost"
+            id="modeToggle"
+            aria-label="Telefon / TV modu arasında geçiş yap"
+          ></button>
+        </div>
+      </header>
+
+      <!-- SECTION: Layout -->
+      <div class="layout">
+        <!-- SECTION: Form Panel (Phone side) -->
+        <section class="panel panel--form" aria-label="Mesaj giriş alanı">
+          <div class="panel__header">
+            <h2>Yeni kayıt ekle</h2>
+            <p class="panel__hint">
+              Bu alan özellikle
+              <strong>telefon</strong>
+              kullanımı için tasarlanmıştır.
+            </p>
+          </div>
+
+          <form id="entryForm" class="entry-form" autocomplete="off">
+            <div class="form-field">
+              <label for="title">Başlık</label>
+              <input
+                id="title"
+                name="title"
+                type="text"
+                required
+                maxlength="60"
+                placeholder="Örn: Önemli Duyuru"
+              />
+            </div>
+
+            <div class="form-field">
+              <label for="message">Kısa metin</label>
+              <textarea
+                id="message"
+                name="message"
+                rows="3"
+                required
+                maxlength="180"
+                placeholder="TV ekranında görünecek mesajınızı yazın"
+              ></textarea>
+            </div>
+
+            <div class="form-field">
+              <label for="phone">Telefon numarası</label>
+              <input
+                id="phone"
+                name="phone"
+                type="tel"
+                inputmode="tel"
+                required
+                maxlength="20"
+                placeholder="Örn: 05XX XXX XX XX"
+              />
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary">
+                Kaydı ekle
+              </button>
+              <button
+                type="button"
+                class="btn btn-outline"
+                id="clearAllBtn"
+              >
+                Tümünü sil
+              </button>
+            </div>
+          </form>
+
+          <p class="panel__info" id="syncInfo">
+            Bu sayfayı
+            <strong>Android TV</strong>
+            üzerinde de açın. Kayıtlar birkaç saniyede bir otomatik yenilenecek.
+          </p>
+        </section>
+
+        <!-- SECTION: Display Panel (TV side) -->
+        <section
+          class="panel panel--display shadow-soft"
+          aria-label="TV ekranı önizleme alanı"
+        >
+          <div class="panel__header panel__header--display">
+            <div>
+              <h2>TV görünümü</h2>
+              <p class="panel__hint">
+                Android TV'de tam ekran açarak uzaktan rahatça okuyun.
+              </p>
+            </div>
+
+            <div class="view-toggle" role="tablist" aria-label="Görünüm türü">
+              <button
+                type="button"
+                class="chip chip--active"
+                id="listViewBtn"
+                data-view="list"
+                role="tab"
+                aria-selected="true"
+              >
+                Liste
+              </button>
+              <button
+                type="button"
+                class="chip"
+                id="cardViewBtn"
+                data-view="cards"
+                role="tab"
+                aria-selected="false"
+              >
+                Kartlar
+              </button>
+            </div>
+          </div>
+
+          <div class="display-meta">
+            <div class="display-meta__item">
+              <span class="dot dot--live" aria-hidden="true"></span>
+              <span id="liveStatus">Canlı senkronizasyon açık</span>
+            </div>
+            <div class="display-meta__item" id="lastUpdatedWrapper">
+              Son güncelleme:
+              <span id="lastUpdated">-</span>
+            </div>
+          </div>
+
+          <div class="display-empty" id="emptyState">
+            <p class="display-empty__title">Henüz kayıt yok</p>
+            <p class="display-empty__text">
+              Soldaki formu kullanarak ilk kaydınızı ekleyin. Burada anında
+              görünecek.
+            </p>
+          </div>
+
+          <!-- SECTION: List View -->
+          <div class="entries entries--list" id="listView" aria-live="polite"></div>
+
+          <!-- SECTION: Card View -->
+          <div class="entries entries--cards" id="cardView" aria-live="polite"></div>
+        </section>
+      </div>
+    </main>
+
+    <!-- SECTION: Scripts -->
+    <script src="script.js"></script>
+  </body>
+</html>
