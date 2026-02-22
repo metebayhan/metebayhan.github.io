@@ -1,8 +1,13 @@
 // SECTION: State & Storage Helpers
 const STORAGE_KEY = "tvWallMessages";
 
-function loadEntries() {
+async function loadEntries() {
   try {
+    // Backend API varsa onu kullan
+    if (window.TvWallAPI && typeof window.TvWallAPI.fetchEntries === "function") {
+      return await window.TvWallAPI.fetchEntries();
+    }
+
     const raw = localStorage.getItem(STORAGE_KEY);
     return raw ? JSON.parse(raw) : [];
   } catch (e) {
@@ -11,8 +16,13 @@ function loadEntries() {
   }
 }
 
-function saveEntries(entries) {
+async function saveEntries(entries) {
   try {
+    if (window.TvWallAPI && typeof window.TvWallAPI.saveEntries === "function") {
+      await window.TvWallAPI.saveEntries(entries);
+      return;
+    }
+
     localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
   } catch (e) {
     console.error("Kayıtlar kaydedilemedi", e);
@@ -67,8 +77,8 @@ function updateLastUpdated() {
   });
 }
 
-function renderEntries() {
-  const entries = loadEntries();
+async function renderEntries() {
+  const entries = await loadEntries();
 
   // Empty state toggle
   if (!entries.length) {
@@ -135,7 +145,7 @@ function renderEntries() {
 }
 
 // SECTION: Mutations
-function addEntryFromForm(event) {
+async function addEntryFromForm(event) {
   event.preventDefault();
 
   const title = titleInput.value.trim();
@@ -144,24 +154,24 @@ function addEntryFromForm(event) {
 
   if (!title || !message || !phone) return;
 
-  const entries = loadEntries();
+  const entries = await loadEntries();
   entries.push(createEntry({ title, message, phone }));
-  saveEntries(entries);
+  await saveEntries(entries);
 
   formEl.reset();
   titleInput.focus();
-  renderEntries();
+  await renderEntries();
 }
 
-function deleteEntry(id) {
-  const entries = loadEntries();
+async function deleteEntry(id) {
+  const entries = await loadEntries();
   const next = entries.filter((e) => e.id !== id);
-  saveEntries(next);
-  renderEntries();
+  await saveEntries(next);
+  await renderEntries();
 }
 
-function clearAllEntries() {
-  const entries = loadEntries();
+async function clearAllEntries() {
+  const entries = await loadEntries();
   if (!entries.length) return;
 
   const confirmed = window.confirm(
@@ -169,12 +179,12 @@ function clearAllEntries() {
   );
   if (!confirmed) return;
 
-  saveEntries([]);
-  renderEntries();
+  await saveEntries([]);
+  await renderEntries();
 }
 
 // SECTION: View & Mode Toggles
-function setView(view) {
+async function setView(view) {
   if (view === "list") {
     listViewBtn.classList.add("chip--active");
     cardViewBtn.classList.remove("chip--active");
@@ -182,7 +192,7 @@ function setView(view) {
     cardViewBtn.classList.add("chip--active");
     listViewBtn.classList.remove("chip--active");
   }
-  renderEntries();
+  await renderEntries();
 }
 
 function toggleMode() {
